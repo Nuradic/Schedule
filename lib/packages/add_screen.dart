@@ -18,16 +18,12 @@ class _AddScheduleState extends State<AddSchedule> {
   TextEditingController? chapController;
   GlobalKey<FormState> myFormkey = GlobalKey<FormState>();
 
-  // void initiateDb() async {
-  //   var db = DatabaseHelper();
-  //   scheduleList = await db.getScheduleList();
-  // }
   var db = DatabaseHelper();
-  @override
-  void initState() {
-    // initiateDb();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -92,16 +88,7 @@ class _AddScheduleState extends State<AddSchedule> {
                       style: ElevatedButton.styleFrom(
                           fixedSize: const Size(100, 30)),
                       onPressed: () {
-                        if (myFormkey.currentState!.validate()) {
-                          db.insertSchedule(
-                            Schedule(
-                              subject: "Physics",
-                              description: "description",
-                              startDate: DateTime(2001),
-                              endDate: DateTime(2004),
-                            ),
-                          );
-                        }
+                        if (myFormkey.currentState!.validate()) {}
                       },
                       child: const Text("Start Date"),
                     ),
