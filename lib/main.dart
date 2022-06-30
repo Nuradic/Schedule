@@ -15,6 +15,9 @@ class ScheduleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Schedule',
       theme: ThemeData(
+        // colorScheme: ColorScheme.fromSwatch(
+        //   accentColor: Colors.white,
+        // ),
         brightness: Brightness.light,
         primarySwatch: Colors.teal,
       ),

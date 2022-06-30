@@ -11,26 +11,33 @@ class AddSchedule extends StatefulWidget {
   State<AddSchedule> createState() => _AddScheduleState();
 }
 
-//////////////  Main State Class ////////////////////
+//////////////////////////  Main State Class ////////////////////
 class _AddScheduleState extends State<AddSchedule> {
-  DateTimeRange? range;
-  TextEditingController? subController;
-  TextEditingController? chapController;
-  GlobalKey<FormState> myFormkey = GlobalKey<FormState>();
+  DateTimeRange? dRange;
+  TimeOfDay? time;
+  DateTime? startDateTime, endDateTime;
+  // String test1 = "testing";
+  TextEditingController subController = TextEditingController();
+  TextEditingController chapController = TextEditingController();
+  GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
 
+  List<bool> isOpened = [false, false, false];
   var db = DatabaseHelper();
-  // @override
-  // void initState() {
+  @override
+  void initState() {
+    subController.addListener(() => {});
 
-  //   super.initState();
-  // }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<String> tabs = ["S", "M", "T", "W", "T", "F", "S"];
+
     return Scaffold(
       appBar: AppBar(
         shadowColor: Colors.transparent,
-        backgroundColor: Colors.white.withAlpha(200).withOpacity(0.8),
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             Get.back();
@@ -48,68 +55,229 @@ class _AddScheduleState extends State<AddSchedule> {
         ),
       ),
       body: Form(
-          key: myFormkey,
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: Column(children: [
-              const SizedBox(height: 40),
-              TextFormField(
-                controller: subController,
-                validator: (userInput) {
-                  if (userInput!.isEmpty) {
-                    return "Please add Subject to the schedule of Study";
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Subject",
-                    hintText: "Add Subject here..."),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: chapController,
-                validator: (userInput) {
-                  if (userInput!.isEmpty) {
-                    return "Please add Chapter to the schedule of Study";
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Chapter",
-                    hintText: "Add Chapter here..."),
-              ),
-              Row(
+        key: myFormKey,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              ExpansionPanelList(
+                  elevation: 0,
+                  children: [
+                    ExpansionPanel(
+                      canTapOnHeader: true,
+                      backgroundColor: Colors.transparent,
+                      isExpanded: isOpened[0],
+                      headerBuilder: (context, isOpen) => const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          "Content of your Schedule",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      body: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.transparent,
+                                )
+                              ],
+                              color: Colors.transparent,
+                            ),
+                            child: TextFormField(
+                              controller: subController,
+                              validator: (userInput) {
+                                if (userInput!.isEmpty) {
+                                  return "Please add Subject to the schedule of Study ";
+                                }
+                                return null;
+                              },
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Subject",
+                                  hintText: "  Subject, Course, Topic..."),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            child: TextFormField(
+                              controller: chapController,
+                              validator: (userInput) {
+                                if (userInput!.isEmpty) {
+                                  return "Please add Chapter to the schedule of Study";
+                                }
+                                return null;
+                              },
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Chapter",
+                                  hintText:
+                                      " Chapter, Unit, Subtopic  here..."),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ExpansionPanel(
+                      backgroundColor: Colors.transparent,
+                      isExpanded: isOpened[1],
+                      headerBuilder: (context, isOpen) => const Padding(
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          "Date",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      body: Column(
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.blue,
+                              ),
+                              margin:
+                                  const EdgeInsets.only(left: 10, right: 10),
+                              height: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(children: const [
+                                  Text('Start date'),
+                                  SizedBox(
+                                    width: 200,
+                                  ),
+                                  Text("04:08:23")
+                                ]),
+                              )),
+                          Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.blue,
+                              ),
+                              margin: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 10),
+                              height: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(children: const [
+                                  Text('End  date'),
+                                  SizedBox(
+                                    width: 200,
+                                  ),
+                                  Text("14:08:23")
+                                ]),
+                              )),
+                        ],
+                      ),
+                    ),
+                    ExpansionPanel(
+                      backgroundColor: Colors.transparent,
+                      isExpanded: isOpened[2],
+                      headerBuilder: (context, isOpen) => const Padding(
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          "Time",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      body: Column(
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.blue,
+                              ),
+                              margin:
+                                  const EdgeInsets.only(left: 10, right: 10),
+                              height: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(children: const [
+                                  Text('Start time'),
+                                  SizedBox(
+                                    width: 240,
+                                  ),
+                                  Text("04:23")
+                                ]),
+                              )),
+                          Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.blue,
+                              ),
+                              margin: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 10),
+                              height: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(children: const [
+                                  Text('End  time'),
+                                  SizedBox(
+                                    width: 240,
+                                  ),
+                                  Text("06:23")
+                                ]),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ],
+                  expansionCallback: (index, isOpen) {
+                    // print(isOpened[index]);
+                    isOpened[index] = !isOpen;
+                    // print(isOpened[index]);
+                    setState(() {});
+                  }),
+              const SizedBox(height: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.only(left: 40, top: 10),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(100, 30)),
-                      onPressed: () {
-                        if (myFormkey.currentState!.validate()) {}
-                      },
-                      child: const Text("Start Date"),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      "Day of the week",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(width: 80),
-                  Container(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(100, 30)),
-                      onPressed: () async {
-                        range =
-                            await pickDateRange(context).then((value) => value);
-                      },
-                      child: const Text("End Date"),
-                    ),
-                  ),
+                  const SizedBox(height: 5),
+                  GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 7,
+                      ),
+                      itemCount: 7,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: const EdgeInsets.only(left: 4, right: 4),
+                          decoration: const BoxDecoration(color: Colors.white),
+                          child: Column(children: [
+                            Text(
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 188, 193, 205),
+                                  fontSize: 20),
+                              tabs[index],
+                            ),
+                          ]),
+                        );
+                      }),
                 ],
               ),
-            ]),
-          )),
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text("Add schedule"),
+              ),
+              const SizedBox(height: 60),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -117,17 +285,25 @@ class _AddScheduleState extends State<AddSchedule> {
   Future pickDateRange(BuildContext context) async {
     DateTimeRange? range = await showDateRangePicker(
       context: context,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(
+      firstDate: //dRange != null ? dRange!.start :
+          DateTime.now(),
+      lastDate: //dRange != null? dRange!.end :
+          DateTime.now().add(
         const Duration(days: 12),
       ),
     );
-    return range;
-  }
 
-  Future pickTime(BuildContext context) async {
-    TimeOfDay? time =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
-    return time;
+    if (range != null) {
+      TimeOfDay? time =
+          await showTimePicker(context: context, initialTime: TimeOfDay.now());
+
+      time ??= TimeOfDay(hour: range.start.hour, minute: range.start.minute);
+      return DateTimeRange(
+          start: DateTime(range.start.year, range.start.month, range.start.day,
+              time.hour, time.minute),
+          end: range.end);
+    }
+
+    return null;
   }
 }

@@ -1,74 +1,76 @@
 // import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
+
 class Schedule {
-  DateTime? startDate, endDate;
+  DateTimeRange? dateTimeRange;
   int? id;
-  int? sid, cid, did, weekId, stid;
-  String? subject, chapter;
-  Map<String, dynamic> whichDay = {
-    // if(schedule.weekId!=null)"weekId":schedule.weekId,
-    "weekId": null,
-    "sunday": false,
-    "monday": false,
-    "tuesday": false,
-    "wednesday": false,
-    "thursday": false,
-    "friday": false,
-    "saturday": false
+  int? sid, cid, did, weekId, date;
+  String subject, chapter;
+  Map<String, int> whichDay = {
+    "sunday": 0,
+    "monday": 0,
+    "tuesday": 0,
+    "wednesday": 0,
+    "thursday": 0,
+    "friday": 0,
+    "saturday": 0
   };
   Schedule(
       {required this.subject,
       required this.chapter,
-      required this.startDate,
-      required this.endDate,
+      required this.dateTimeRange,
       this.sid});
 
-  static Map<String, Map<String, dynamic>> toMapMap(Schedule schedule) {
-    return {
-      "scTab": {
+  static List<Map<String, dynamic>> listMap(Schedule schedule) {
+    return [
+      {
         if (schedule.sid != null) "sid": schedule.sid,
         "subject": schedule.subject,
         "did": schedule.did,
         "cid": schedule.cid,
       },
-      "chapter": {
-        if (schedule.cid != null) "cid": schedule.cid, //"cid": schedule.cid,
-        "chapter": schedule.chapter,
-      },
-      "dateTimeTab": {
-        if (schedule.did != null) "did": schedule.sid, // "did": schedule.did,
-        "hour": schedule.startDate!.hour,
-        "minute": schedule.startDate!.minute,
+      {
+        "did": schedule.did, // "did": schedule.did,
+        "hour": schedule.dateTimeRange!.start.hour,
+        "minute": schedule.dateTimeRange!.start.minute,
         "weekId": schedule.weekId,
       },
-      "dateTab": {
-        if (schedule.stid != null) "stid": schedule.stid, //"weekId":
-        "sday": schedule.startDate!.day,
-        "smonth": schedule.startDate!.month,
-        "syear": schedule.startDate!.year,
-        "eday": schedule.startDate!.day,
-        "emonth": schedule.startDate!.month,
-        "eyear": schedule.startDate!.year,
+      {
+        "cid": schedule.cid, //"cid": schedule.cid,
+        "name": schedule.chapter,
       },
-      "weekTab": schedule.whichDay
-    };
+      {
+        " date": schedule.date, //"weekId":
+        "sday": schedule.dateTimeRange!.start.day,
+        "smonth": schedule.dateTimeRange!.start.month,
+        "syear": schedule.dateTimeRange!.start.year,
+        "eday": schedule.dateTimeRange!.end.day,
+        "emonth": schedule.dateTimeRange!.end.month,
+        "eyear": schedule.dateTimeRange!.end.year,
+      },
+      schedule.whichDay
+    ];
   }
 
-  static Schedule fromMap(Map<String, Map<String, dynamic>> map) {
+  static Schedule fromMap(List<Map<String, dynamic>> listMap) {
     return Schedule(
-        subject: map['scTab']!["subject"],
-        chapter: map["chapter"]!["chapter"],
-        startDate: DateTime(
-            map["dateTab"]!["syear"],
-            map['dateTab']!["smonth"],
-            map["dateTab"]!["sday"],
-            map["dateTimeTab"]!["hour"],
-            map["dateTimeTab"]!["minute"]),
-        endDate: DateTime(
-          map["dateTab"]!["eyear"],
-          map['dateTab']!["emonth"],
-          map["dateTab"]!["eday"],
+        subject: listMap[0]["subject"],
+        chapter: listMap[2]["name"],
+        dateTimeRange: DateTimeRange(
+          start: DateTime(
+            listMap[3]["syear"],
+            listMap[3]["smonth"],
+            listMap[3]["sday"],
+            listMap[1]["hour"],
+            listMap[1]["minute"],
+          ),
+          end: DateTime(
+            listMap[3]["eyear"],
+            listMap[3]["emonth"],
+            listMap[3]["eday"],
+          ),
         ),
-        sid: map["sciTab"]!["sid"]);
+        sid: listMap[0]["sid"]);
   }
 }

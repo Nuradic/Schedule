@@ -24,38 +24,24 @@ class DatabaseHelper {
 
   Future<Database> initDb() async {
     Directory mydir = await getApplicationDocumentsDirectory();
-    String mypath = join(mydir.path, 'schedule.db');
+    String mypath = join(mydir.path, 'schedules10.db');
     return await openDatabase(version: 1, mypath, onCreate: _onCreate);
   }
 
   _onCreate(Database db, int version) {
 ///////////////////////////Schedule table/////////////////////////////////
-    db.execute('''CREATE TABLE $scheduleTableName (
-        sid INTEGER PRIMARY KEY AUTOINCREMENT, 
-        cid INTEGER NOT NULL,
-        did INTEGER NOT NULL,
-        subject TEXT, 
-        )
-        ''');
+    db.execute(
+        '''CREATE TABLE $scheduleTableName (sid INTEGER PRIMARY KEY AUTOINCREMENT,cid INTEGER NOT NULL, did INTEGER NOT NULL, subject TEXT)''');
 //////////////////////////date time table////////////////////////////////
     db.execute('''CREATE TABLE $dateTableName(
-        did INTEGER PRIMARY KEY AUTOINCREMENT,
-        hour INTEGER NOT NULL,
-        minute INTEGER NOT NULL,
-        date INTEGER NOT NULL,
-        weekId INTEGER NOT NULL,
-        )
-        ''');
+        did INTEGER PRIMARY KEY AUTOINCREMENT,hour INTEGER NOT NULL,minute INTEGER NOT NULL,date INTEGER NOT NULL,weekId INTEGER NOT NULL)''');
 
 ///////////////////////////Start and end date//////////////////////////////
     db.execute('''
-CREATE TABLE $dateName(stid INTEGER PRIMARY KEY AUTOINCREMENT,
-sday INTEGER NOT NULL,
-smonth INTEGER NOT NULL,
-syear INTEGER NOT NULL,
-eday INTEGER NOT NULL,
-emonth INTEGER NOT NULL,
-eyear INTEGER NOT NULL,)
+CREATE TABLE $dateName( date INTEGER PRIMARY KEY AUTOINCREMENT,
+sday INTEGER NOT NULL, smonth INTEGER NOT NULL,
+syear INTEGER NOT NULL, eday INTEGER NOT NULL,
+emonth INTEGER NOT NULL, eyear INTEGER NOT NULL)
 ''');
 ///////////////////////////chapter table///////////////////////////////////
     db.execute('''
@@ -63,92 +49,97 @@ CREATE TABLE $chapTableName(cid INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT )
 ''');
 //////////////////////////week table///////////////////////////////////////
     db.execute('''
-CRAETE TABLE $weekTable(
-weekId INTEGER PRIMARY KEY AUTOINCREMENT,
-sunday BOLEAN NOT NULL,
-monday BOLEAN NOT NULL,
-tuesday BOLEAN NOT NULL,
-wednesday BOLEAN NOT NULL,
-thursday BOLEAN NOT NULL,
-friday BOLEAN NOT NULL,
-saturday BOLEAN NOT NULL
-)''');
+CREATE TABLE $weekTable(
+weekId INTEGER PRIMARY KEY AUTOINCREMENT, sunday  INTEGER NOT NULL, monday  INTEGER NOT NULL, tuesday  INTEGER NOT NULL, wednesday  INTEGER NOT NULL, thursday  INTEGER NOT NULL, friday  INTEGER NOT NULL, saturday  INTEGER NOT NULL )''');
   }
 
   //Performing  Crud opeartion of on Database
-  Future<List<Map<String, dynamic>>> getMaplist({required tableName}) async {
+  Future<List<Map<String, dynamic>>> getMaplist(
+      {required tableName, required id}) async {
     Database db = await database;
-    return await db.query(tableName, orderBy: "id ASC");
+    return await db.query(tableName, orderBy: "$id ASC");
   }
 
 ////////////////////////////////////////////////////////////////////////////////
   Future<List<Schedule>> getScheduleList() async {
-    List<Map<String, Map<String, dynamic>>> myMapMap = [];
-    List<Map<String, dynamic>> sciListMap =
-        await getMaplist(tableName: scheduleTableName);
-    List<Map<String, dynamic>> chapListMap =
-        await getMaplist(tableName: chapTableName);
-    List<Map<String, dynamic>> dateTimeListMap =
-        await getMaplist(tableName: dateTableName);
-    List<Map<String, dynamic>> dateListMap =
-        await getMaplist(tableName: dateName);
-    List<Map<String, dynamic>> weekListMap =
-        await getMaplist(tableName: weekTable);
-
-    getMaplist(tableName: scheduleTableName).then((value) {
-      for (int i = 0; i < value.length; i++) {
-        Map<String, Map<String, dynamic>> tempMapMap = {
-          "scTab": sciListMap[i],
-          "chapter": chapListMap[i],
-          "dateTimeTab": dateTimeListMap[i],
-          "dateTab": dateListMap[i],
-          "weekTab": weekListMap[i]
-        };
-        myMapMap.add(tempMapMap);
-      }
-    });
     List<Schedule> mySchedule = [];
-    for (int i = 0; i < myMapMap.length; i++) {
-      mySchedule.add(Schedule.fromMap(myMapMap[i]));
+    // List<List<Map<String, dynamic>>> myListMap = [];
+    List<Map<String, dynamic>> sciListMap =
+        await getMaplist(tableName: scheduleTableName, id: 'sid');
+    List<Map<String, dynamic>> chapListMap =
+        await getMaplist(tableName: chapTableName, id: 'cid');
+    List<Map<String, dynamic>> dateTimeListMap =
+        await getMaplist(tableName: dateTableName, id: 'did');
+    List<Map<String, dynamic>> dateListMap =
+        await getMaplist(tableName: dateName, id: 'date');
+    List<Map<String, dynamic>> weekListMap =
+        await getMaplist(tableName: weekTable, id: 'weekId');
+
+    // print(value);
+    for (int i = 0; i < sciListMap.length; i++) {
+      List<Map<String, dynamic>> tempListMap = [
+        sciListMap[i],
+        dateTimeListMap[i],
+        chapListMap[i],
+        dateListMap[i],
+        weekListMap[i]
+      ];
+      // print(tempListMap);
+      // print("\n");
+      mySchedule.add(Schedule.fromMap(tempListMap));
+
+      // print(mySchedule);
     }
+    // print(myListMap.length);
+
+    // print(mySchedule);
+    // for (int i = 0; i < myListMap.length; i++) {}
     return mySchedule;
   }
 
   Future<int> insertSchedule(Schedule schedule) async {
     Database db = await database;
-    int weekId = await db.insert(weekTable, schedule.whichDay);
-    int stid = await db.insert(dateName, {
-      "sday": schedule.startDate!.day,
-      "smonth": schedule.startDate!.month,
-      "syear": schedule.startDate!.year,
-      "eday": schedule.startDate!.day,
-      "emonth": schedule.startDate!.month,
-      "eyear": schedule.startDate!.year,
-    });
-    int cid = await db.insert(chapTableName, {"chapter": schedule.chapter});
+    List<Map<String, dynamic>> listMap = Schedule.listMap(schedule);
+    listMap[4]['weekId'] = await db.insert(weekTable, listMap[4]);
+    listMap[3][" date"] = await db.insert(dateName, listMap[3]);
+    listMap[2]["cid"] = await db.insert(chapTableName, listMap[2]);
+    //// inserting ids to other tables
+    listMap[1][" date"] = listMap[3][" date"];
+    listMap[1]["weekId"] = listMap[4]["weekId"];
+    listMap[1]["did"] = await db.insert(dateTableName, listMap[1]);
+    listMap[0]["cid"] = listMap[2]["cid"];
+    listMap[0]["did"] = listMap[1]["did"];
 
-    int did = await db.insert(dateTableName, {
-      "hour": schedule.startDate!.hour,
-      "minute": schedule.startDate!.minute,
-      "date": stid,
-      "weekId": weekId
-    });
-    int sid = await db.insert(scheduleTableName,
-        {"cid": cid, "did": did, "subject": schedule.subject});
-
-    return sid;
-    // db.insert("schedule", Schedule.toMap(schedule));
+    return await db.insert(scheduleTableName, listMap[0]);
   }
 
   Future<int> updateSchedule(Schedule schedule) async {
     Database db = await database;
-    return await db.update(scheduleTableName, Schedule.toMapMap(schedule),
-        where: "id= ?", whereArgs: [schedule.id]);
+    List<Map<String, dynamic>> listMap = Schedule.listMap(schedule);
+    await db.update(weekTable, listMap[4],
+        where: "weekId= ?", whereArgs: [schedule.weekId]);
+    await db.update(dateName, listMap[3],
+        where: " date= ?", whereArgs: [schedule.date]);
+    await db.update(dateTableName, listMap[2],
+        where: "did= ?", whereArgs: [schedule.did]);
+    await db.update(chapTableName, listMap[1],
+        where: "cid= ?", whereArgs: [schedule.cid]);
+    return await db.update(scheduleTableName, listMap[0],
+        where: "sid= ?", whereArgs: [schedule.sid]);
   }
 
   Future<int> deleteSchedule(Schedule schedule) async {
     Database db = await database;
+    // Map<String, Map<String, dynamic>> mapOfMap = Schedule.toMapMap(schedule);
+
+    await db.delete(dateName, where: " date= ?", whereArgs: [schedule.date]);
+    await db.delete(dateTableName, where: "did= ?", whereArgs: [schedule.did]);
+    await db.delete(chapTableName, where: "cid= ?", whereArgs: [schedule.cid]);
+    await db
+        .delete(weekTable, where: "weekId= ?", whereArgs: [schedule.weekId]);
     return await db
-        .delete(scheduleTableName, where: "id= ?", whereArgs: [schedule.id]);
+        .delete(scheduleTableName, where: "sid= ?", whereArgs: [schedule.sid]);
+    // return await db
+    //     .delete(scheduleTableName, where: "id= ?", whereArgs: [schedule.id]);
   }
 }
