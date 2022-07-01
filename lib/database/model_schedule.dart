@@ -32,8 +32,10 @@ class Schedule {
       },
       {
         "did": schedule.did, // "did": schedule.did,
-        "hour": schedule.dateTimeRange!.start.hour,
-        "minute": schedule.dateTimeRange!.start.minute,
+        "shour": schedule.dateTimeRange!.start.hour,
+        "sminute": schedule.dateTimeRange!.start.minute,
+        "ehour": schedule.dateTimeRange!.end.hour,
+        "eminute": schedule.dateTimeRange!.end.minute,
         "weekId": schedule.weekId,
       },
       {
@@ -62,14 +64,11 @@ class Schedule {
             listMap[3]["syear"],
             listMap[3]["smonth"],
             listMap[3]["sday"],
-            listMap[1]["hour"],
-            listMap[1]["minute"],
+            listMap[1]["shour"],
+            listMap[1]["sminute"],
           ),
-          end: DateTime(
-            listMap[3]["eyear"],
-            listMap[3]["emonth"],
-            listMap[3]["eday"],
-          ),
+          end: DateTime(listMap[3]["eyear"], listMap[3]["emonth"],
+              listMap[3]["eday"], listMap[1]['ehour'], listMap[1]['eminute']),
         ),
         sid: listMap[0]["sid"]);
   }

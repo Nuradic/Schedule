@@ -24,7 +24,7 @@ class DatabaseHelper {
 
   Future<Database> initDb() async {
     Directory mydir = await getApplicationDocumentsDirectory();
-    String mypath = join(mydir.path, 'schedules10.db');
+    String mypath = join(mydir.path, 'schedules12.db');
     return await openDatabase(version: 1, mypath, onCreate: _onCreate);
   }
 
@@ -34,7 +34,7 @@ class DatabaseHelper {
         '''CREATE TABLE $scheduleTableName (sid INTEGER PRIMARY KEY AUTOINCREMENT,cid INTEGER NOT NULL, did INTEGER NOT NULL, subject TEXT)''');
 //////////////////////////date time table////////////////////////////////
     db.execute('''CREATE TABLE $dateTableName(
-        did INTEGER PRIMARY KEY AUTOINCREMENT,hour INTEGER NOT NULL,minute INTEGER NOT NULL,date INTEGER NOT NULL,weekId INTEGER NOT NULL)''');
+        did INTEGER PRIMARY KEY AUTOINCREMENT,shour INTEGER NOT NULL,sminute INTEGER NOT NULL,ehour INTEGER NOT NULL,eminute INTEGER NOT NULL,date INTEGER NOT NULL,weekId INTEGER NOT NULL)''');
 
 ///////////////////////////Start and end date//////////////////////////////
     db.execute('''
@@ -87,13 +87,8 @@ weekId INTEGER PRIMARY KEY AUTOINCREMENT, sunday  INTEGER NOT NULL, monday  INTE
       // print(tempListMap);
       // print("\n");
       mySchedule.add(Schedule.fromMap(tempListMap));
-
-      // print(mySchedule);
     }
-    // print(myListMap.length);
 
-    // print(mySchedule);
-    // for (int i = 0; i < myListMap.length; i++) {}
     return mySchedule;
   }
 
