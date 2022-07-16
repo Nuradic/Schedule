@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'home_controller.dart';
 
@@ -136,8 +137,8 @@ class MyHomePage extends StatelessWidget {
                   IconButton(
                     onPressed: () {},
                     splashColor: Colors.teal,
-                    icon: const Icon(
-                      Icons.sort_sharp,
+                    icon: const FaIcon(
+                      FontAwesomeIcons.arrowDownWideShort,
                       color: Color.fromARGB(255, 188, 193, 205),
                     ),
                   )
@@ -166,100 +167,113 @@ class MyHomePage extends StatelessWidget {
     var duration =
         homeController.scheduleList[index].dateTimeRange!.duration.inDays;
 
-    return Row(
-      children: [
-        Column(children: [
-          Container(
-            margin: const EdgeInsets.only(top: 10),
-            child: Text("$shour:$sminute",
-                style: TextStyle(
-                    color: Colors.black.withAlpha(180), fontSize: 16)),
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(children: [
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              child: Text("$shour:$sminute",
+                  style: TextStyle(
+                      color: Colors.black.withAlpha(180), fontSize: 16)),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "$ehour:$eminute",
+              style: const TextStyle(
+                  color: Color.fromARGB(255, 188, 193, 205), fontSize: 16),
+            )
+          ]),
+          VerticalDivider(
+            color: Colors.grey.withOpacity(0.5),
+            thickness: 2,
           ),
-          const SizedBox(height: 10),
-          Text(
-            "$ehour:$eminute",
-            style: const TextStyle(
-                color: Color.fromARGB(255, 188, 193, 205), fontSize: 16),
-          )
-        ]),
-        VerticalDivider(
-          color: Colors.grey.withOpacity(0.5),
-          thickness: 2,
-        ),
-        Card(
-          margin: const EdgeInsets.all(10),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          color: const Color.fromARGB(255, 230, 243, 242),
-          child: SizedBox(
-            height: 300,
-            width: 280,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
+          //////////////////////////////////////////////////////////////////////
+          Card(
+            margin: const EdgeInsets.all(10),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            color: const Color.fromARGB(255, 230, 243, 242),
+            child: SizedBox(
+              height: 200,
+              width: 280,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(left: 10, top: 10),
+                        child: Text(
+                          homeController.scheduleList[index].subject,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const Expanded(child: SizedBox(width: 160)),
+                      PopupMenuButton(
+                        onSelected: (value) {
+                          if (value == 0) {
+                            homeController.removeSchedule(index);
+                          }
+                        },
+                        itemBuilder: (context) => const [
+                          PopupMenuItem(value: 0, child: Text("Delete")),
+                          PopupMenuItem(value: 1, child: Text("Update")),
+                          PopupMenuItem(value: 2, child: Text("Extend"))
+                        ],
+                        child: const Icon(Icons.more_vert),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: Container(
                       margin: const EdgeInsets.only(left: 10, top: 10),
                       child: Text(
-                        homeController.scheduleList[index].subject,
+                        homeController.scheduleList[index].chapter,
                         style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                            color: Color.fromARGB(255, 112, 112, 112),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const Expanded(child: SizedBox(width: 160)),
-                    IconButton(
-                        splashColor: Colors.teal,
-                        icon: const Icon(Icons.more_vert),
-                        onPressed: () {
-                          // print("Hello");
-                        }),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 10, top: 10),
-                    child: Text(
-                      homeController.scheduleList[index].chapter,
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 112, 112, 112),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
                   ),
-                ),
-                const SizedBox(height: 60),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.timer,
-                      size: 18,
-                    ),
-                    Text("   $duration days left for the Chapter",
-                        style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 112, 112, 112)))
-                  ],
-                ),
-                Row(
-                  children: const [
-                    SizedBox(width: 240),
-                    Icon(Icons.radio_button_off,
-                        size: 20, color: Color.fromARGB(255, 196, 196, 196)),
-                  ],
-                ),
-              ],
+                  Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      const FaIcon(
+                        FontAwesomeIcons.clock,
+                        size: 18,
+                      ),
+                      Text("   $duration days left for the Chapter",
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 112, 112, 112)))
+                    ],
+                  ),
+                  Row(
+                    children: const [
+                      SizedBox(width: 240),
+                      Icon(Icons.radio_button_off,
+                          size: 20, color: Color.fromARGB(255, 196, 196, 196)),
+                    ],
+                  ),
+                  const SizedBox(height: 10)
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget sliverBuild() {
-    print(homeController.scheduleList);
     return Obx(
       () => SliverGrid(
         delegate: SliverChildBuilderDelegate(
@@ -270,27 +284,12 @@ class MyHomePage extends StatelessWidget {
         ),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
-          childAspectRatio: 1.6,
+          childAspectRatio: 1.7,
         ),
       ),
     );
   }
 }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   DateTimeRange? myDayRange;
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }
-
-/////////////////////////////////// Functions //////////////////////////////////
 
 /////////////////////////delegate for sliver object/////////////////////////////
 class MyDelegate extends SliverPersistentHeaderDelegate {

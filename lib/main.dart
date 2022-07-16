@@ -15,12 +15,11 @@ class ScheduleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+        themeMode: ThemeMode.system,
+        theme: MyThemes.dark,
+        darkTheme: MyThemes.light,
         debugShowCheckedModeBanner: false,
         title: 'Schedule',
-        theme: ThemeData(
-          brightness: Brightness.light,
-          primarySwatch: Colors.teal,
-        ),
         getPages: [
           GetPage(
               name: '/home',
@@ -33,10 +32,19 @@ class ScheduleApp extends StatelessWidget {
           GetPage(
             name: '/temp',
             page: () => Temp(),
-          )
+          ),
         ],
         initialRoute: '/home');
   }
 }
 
-class DarkOrLight {}
+class MyThemes {
+  static final dark = ThemeData(
+    brightness: Brightness.dark,
+    primarySwatch: Colors.teal,
+  );
+  static final light = ThemeData(
+    brightness: Brightness.light,
+    primarySwatch: Colors.teal,
+  );
+}

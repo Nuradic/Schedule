@@ -24,7 +24,7 @@ class DatabaseHelper {
 
   Future<Database> initDb() async {
     Directory mydir = await getApplicationDocumentsDirectory();
-    String mypath = join(mydir.path, 'schedules12.db');
+    String mypath = join(mydir.path, 'schedules13.db');
     return await openDatabase(version: 1, mypath, onCreate: _onCreate);
   }
 
@@ -84,8 +84,7 @@ weekId INTEGER PRIMARY KEY AUTOINCREMENT, sunday  INTEGER NOT NULL, monday  INTE
         dateListMap[i],
         weekListMap[i]
       ];
-      // print(tempListMap);
-      // print("\n");
+
       mySchedule.add(Schedule.fromMap(tempListMap));
     }
 
@@ -125,8 +124,6 @@ weekId INTEGER PRIMARY KEY AUTOINCREMENT, sunday  INTEGER NOT NULL, monday  INTE
 
   Future<int> deleteSchedule(Schedule schedule) async {
     Database db = await database;
-    // Map<String, Map<String, dynamic>> mapOfMap = Schedule.toMapMap(schedule);
-
     await db.delete(dateName, where: " date= ?", whereArgs: [schedule.date]);
     await db.delete(dateTableName, where: "did= ?", whereArgs: [schedule.did]);
     await db.delete(chapTableName, where: "cid= ?", whereArgs: [schedule.cid]);
@@ -134,7 +131,5 @@ weekId INTEGER PRIMARY KEY AUTOINCREMENT, sunday  INTEGER NOT NULL, monday  INTE
         .delete(weekTable, where: "weekId= ?", whereArgs: [schedule.weekId]);
     return await db
         .delete(scheduleTableName, where: "sid= ?", whereArgs: [schedule.sid]);
-    // return await db
-    //     .delete(scheduleTableName, where: "id= ?", whereArgs: [schedule.id]);
   }
 }

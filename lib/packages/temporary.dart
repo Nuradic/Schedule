@@ -13,13 +13,20 @@ class Temp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // List<String> tabs = ["S", "M", "T", "W", "T", "F", "S"];
     return Scaffold(
       appBar: AppBar(),
       body: Obx(
         () => Center(
-            child: Text(homeController.scheduleList.isNotEmpty
-                ? homeController.scheduleList[0].chapter
-                : 'nothing here...')),
+            child: Column(
+          children: [
+            Text("${homeController.dateTime.value.second}"),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text("Click"),
+            ),
+          ],
+        )),
       ),
     );
   }

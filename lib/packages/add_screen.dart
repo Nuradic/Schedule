@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:schedule/database/model_schedule.dart';
 import '../database/databasehelper.dart';
@@ -10,12 +11,12 @@ class AddSchedule extends StatelessWidget {
   DateTimeRange? dRange;
   TimeOfDay? time;
   DateTime? startDateTime, endDateTime;
-  TextEditingController subController = TextEditingController();
-  TextEditingController chapController = TextEditingController();
-  TextEditingController startTimeController = TextEditingController();
-  TextEditingController endTimeController = TextEditingController();
-  TextEditingController startDateController = TextEditingController();
-  TextEditingController endDateController = TextEditingController();
+  final subController = TextEditingController();
+  final chapController = TextEditingController();
+  final startTimeController = TextEditingController();
+  final endTimeController = TextEditingController();
+  final startDateController = TextEditingController();
+  final endDateController = TextEditingController();
 
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
 
@@ -75,6 +76,9 @@ class AddSchedule extends StatelessWidget {
                     ),
                     child: TextFormField(
                       controller: subController,
+                      onChanged: (userInput) {
+                        myFormKey.currentState!.validate();
+                      },
                       validator: (userInput) {
                         if (userInput!.isEmpty) {
                           return "Please add Subject to the schedule of Study ";
@@ -92,6 +96,9 @@ class AddSchedule extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     child: TextFormField(
+                      onChanged: (userInput) {
+                        myFormKey.currentState!.validate();
+                      },
                       controller: chapController,
                       validator: (userInput) {
                         if (userInput!.isEmpty) {
@@ -124,6 +131,9 @@ class AddSchedule extends StatelessWidget {
                     child: SizedBox(
                       height: 40,
                       child: TextFormField(
+                        onChanged: (userInput) {
+                          myFormKey.currentState!.validate();
+                        },
                         controller: startDateController,
                         validator: (userInput) {
                           if (startDate == null) {
@@ -138,12 +148,16 @@ class AddSchedule extends StatelessWidget {
                         textAlignVertical: TextAlignVertical.bottom,
                         keyboardType: TextInputType.none,
                         decoration: const InputDecoration(
-                            suffixIcon: Icon(Icons.date_range),
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: FaIcon(FontAwesomeIcons.calendarDays,
+                                  size: 20),
+                            ),
                             border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(14))),
                             labelText: "Start",
-                            hintText: "  19/02/23"),
+                            hintText: "  _*_/_*_/_*_"),
                       ),
                     ),
                   ),
@@ -152,6 +166,9 @@ class AddSchedule extends StatelessWidget {
                     child: SizedBox(
                       height: 40,
                       child: TextFormField(
+                        onChanged: (userInput) {
+                          myFormKey.currentState!.validate();
+                        },
                         controller: endDateController,
                         validator: (userInput) {
                           if (endDate == null) {
@@ -166,12 +183,16 @@ class AddSchedule extends StatelessWidget {
                         textAlignVertical: TextAlignVertical.bottom,
                         keyboardType: TextInputType.none,
                         decoration: const InputDecoration(
-                            suffixIcon: Icon(Icons.date_range),
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: FaIcon(FontAwesomeIcons.calendarDays,
+                                  size: 20),
+                            ),
                             border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(14))),
                             labelText: "End", //todo
-                            hintText: "  21/02/23"),
+                            hintText: "  _*_/_*_/_*_"),
                       ),
                     ),
                   ),
@@ -206,16 +227,18 @@ class AddSchedule extends StatelessWidget {
                         textAlignVertical: TextAlignVertical.bottom,
                         keyboardType: TextInputType.none,
                         decoration: const InputDecoration(
-                            suffixIcon: Icon(Icons.av_timer),
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: FaIcon(FontAwesomeIcons.clock, size: 20),
+                            ),
                             border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(14))),
                             labelText: "Start",
-                            hintText: "  19:23"),
+                            hintText: "  _*_:_*_"),
                       ),
                     ),
                   ),
-                  // const SizedBox(width: 30),
                   const Icon(Icons.arrow_forward),
                   Expanded(
                     child: SizedBox(
@@ -235,71 +258,99 @@ class AddSchedule extends StatelessWidget {
                         textAlignVertical: TextAlignVertical.bottom,
                         keyboardType: TextInputType.none,
                         decoration: const InputDecoration(
-                            suffixIcon: Icon(Icons.av_timer),
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: FaIcon(FontAwesomeIcons.clock, size: 20),
+                            ),
                             border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(14))),
                             labelText: "End",
-                            hintText: "  21:23"),
+                            hintText: "  _*_:_*_"),
                       ),
                     ),
                   ),
                 ]),
               ),
               const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      "Day of the week",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 7,
-                      ),
-                      itemCount: 7,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          elevation: 0,
-                          margin: const EdgeInsets.only(left: 4, right: 4),
-                          color: Colors.white,
-                          child: InkWell(
-                            splashColor: Colors.amber,
-                            onTap: () {},
-                            child: Center(
-                              child: Text(
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 188, 193, 205),
-                                    fontSize: 20),
-                                tabs[index],
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                ],
-              ),
               Center(
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     if (myFormKey.currentState!.validate()) {
-                      myRangeDate =
-                          myRange(startDate, endDate, startTime, endTime);
-                      if (myRangeDate != null) {
-                        homeController.addSchedule(Schedule(
-                            subject: subController.text,
-                            chapter: chapController.text,
-                            dateTimeRange: myRangeDate));
-                        Get.back();
-                      }
+                      var tempSchedule = Schedule(
+                          subject: subController.text,
+                          chapter: chapController.text,
+                          dateTimeRange: myRangeDate);
+                      Get.defaultDialog(
+                          backgroundColor: Colors.teal,
+                          title: 'Choose Days of the week',
+                          cancel: ElevatedButton(
+                            onPressed: () {},
+                            child: const Text('Cancel',
+                                style: TextStyle(color: Colors.redAccent)),
+                          ),
+                          confirm: ElevatedButton(
+                            onPressed: () {
+                              bool add = false;
+                              for (int i = 0; i < 7; i++) {
+                                if (tempSchedule.whichDayToListBool()[i]) {
+                                  add = true;
+                                  break;
+                                }
+                              }
+                              if (add) {
+                                myRangeDate = myRange(
+                                    startDate, endDate, startTime, endTime);
+                                if (myRangeDate != null) {
+                                  homeController.addSchedule(tempSchedule);
+                                  Get.back();
+                                }
+                              }
+                            },
+                            child: const Text('Ok',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                          content: SizedBox(
+                            height: 250,
+                            width: 200,
+                            child: GridView.builder(
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisSpacing: 10,
+                                  crossAxisCount: 3,
+                                ),
+                                itemCount: 7,
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                    elevation: 0,
+                                    margin: const EdgeInsets.only(
+                                        left: 4, right: 4),
+                                    color: tempSchedule.whichDay[index] == 1
+                                        ? Colors.amber
+                                        : Colors.white,
+                                    child: InkWell(
+                                      splashColor: Colors.amber,
+                                      onTap: () {
+                                        tempSchedule
+                                                .whichDayToListBool()[index] =
+                                            !tempSchedule
+                                                .whichDayToListBool()[index];
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          style: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 188, 193, 205),
+                                              fontSize: 20),
+                                          tabs[index],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                          )); /////////
+
                     }
                   },
                   icon: const Icon(Icons.add),
@@ -343,33 +394,3 @@ class AddSchedule extends StatelessWidget {
     return await showTimePicker(context: context, initialTime: TimeOfDay.now());
   }
 }
-
-//////////////////////////  Main State Class ////////////////////
-// class _AddScheduleState extends State<AddSchedule> {
- 
-//   @override
-//   void initState() {
-//     subController.addListener(() => {});
-
-//     super.initState();
-//   }
-
-//   @override
-//   void dispose() {
-//     subController.dispose();
-//     chapController.dispose();
-//     startTimeController.dispose();
-//     startDateController.dispose();
-//     endTimeController.dispose();
-//     endDateController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-    
-
-//     return 
-//   }
-
-// }

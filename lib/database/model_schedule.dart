@@ -16,6 +16,13 @@ class Schedule {
     "friday": 0,
     "saturday": 0
   };
+  whichDayToListBool() {
+    List<bool> days = [];
+    return whichDay.forEach((key, value) {
+      days.add(value == 1);
+    });
+  }
+
   Schedule(
       {required this.subject,
       required this.chapter,
