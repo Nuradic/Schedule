@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
-import 'package:schedule/packages/home_controller.dart';
+import 'package:schedule/GetX/home_controller.dart';
+
+import 'home_controller.dart';
 
 class HomeBinding extends Bindings {
   @override
